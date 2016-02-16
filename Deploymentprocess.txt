@@ -1,0 +1,53 @@
+               Build deployment Procedure in Development servers
+
+Summary
+1)	stop all applications
+2)	deploy the build in all servers for required Rel regions
+3)	run OTL and TP  Database changes 
+4)	start the Applications
+
+
+PreDeployment Process in Dev server
+1) Send a mail to Development team that “RelXXX regions will not be available for build deployment till next mail<EOM>
+2) Connect File server (US-PHX-PPX-3FSR01D) to transfer the D:\Build\DistributionArena\RelXXXRelease\PortalDist.zip to Linux server mapped drive /apps/t360/Build_Source/RelXXXX/   // this is for TP deployment //
+3) Connect all Servers for OTL and TP build deployment by RDP or Pcanywhere or Telnet 
+   A) Citrix server – 162.70.116.31 
+   b) Trade form server-162.70.26.50:13390
+   c) Timekeeper Server- 162.70.26.50:13390
+   d) Agent server –162.70.26.50:13390
+   e) Portal- 162.70.26.50 using Putty by personal  login  
+
+ 
+4) Shut down the application in Trade form, timekeeper and agents, TP on respective server 
+    Note: use start/stop scripts on 162.70.26.50 by ./apopr in /apps/t360/scripts/weblogic
+
+
+Deployment 
+
+For TPS
+
+  Connect to 162.70.116.31 with proponix user and password- @m$ppx!!
+
+1.	Disconnect the user from Citrix management console if any user is logged in 
+2.	 run the deployment script XXXX1-OTL-Deployment-XXXXX.bat for all all regions which you want deploy .for windows server you can find the deployment script on build deployment folder shortcut on desktop
+
+For TP
+
+1.	 Connect to 162.70.26.50:2022 with personal id 
+2.	Go to /apps/t360/scripts/weblogic and run ./apopr files and shut down the application
+3.	After the Region is down , go  to /
+4.	
+And run command  ./deployPortal-tpQA810.sh
+5.	Go to 162.70.116.16 and execute the TP Database changes 
+6.	After Deployment start the TP  by Going to  /apps/t360/scripts/weblogic and run ./apopr files and start the application
+
+For Agents
+
+1.	Login into 162.70.26.50:13390 with personal login
+2.	Go to Fire deamon pro and shut down all the applications of the region which your deploying(Jboss, TPS agents, TP Agents)
+3.	Go to I: and DAPP2 and run the Update script for all Jboss, TP agents, and TPS agents
+4.	Go to 162.70.116.16 and execute the TPS Database changes 
+5.	After all the deployment go to Go to Fire deamon pro and start all the applications of the region which your deploying(Jboss, TPS agents, TP Agents)
+ Note: For starting the TP agents should only be started after Portal and Logger server 
+
+After all the deployment send the deployment completed mail to Dev Team 
